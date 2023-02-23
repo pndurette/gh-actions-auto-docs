@@ -25,6 +25,11 @@ def read_action_yaml(filename: str) -> dict:
 
 
 def markdown_to_github_html_for_table(md: str) -> str:
+    """
+    Transforms Markdown into specific HTML that renders
+    correctly in GitHub flavoured Markdown table cells.
+    (e.g. code blocks)
+    """
     # Convert markdown to html
     # Support code blocks w/ fenced_code
     md = markdown.markdown(md, extensions=["fenced_code"])
@@ -36,7 +41,8 @@ def markdown_to_github_html_for_table(md: str) -> str:
     # The 'fenced_code' python-markdown extension renders markdown
     # code blocks as <pre><code ...></code></pre> but GitHub will only
     # render code blocks preperly in tables as <pre></pre
-    md = re.sub("<code.*?>|<\/code>", "", md)
+    # md = re.sub("<code.*?>|<\/code>", "", md)
+    md = re.sub("(?<=<pre>)<code.*?>|<\/code>(?=<\/pre>)", "", md)
 
     # Convert remaining newlines to HTML breaks <br />
     # i.e. within multi-line html elements such as <p> or <pre>
@@ -68,7 +74,7 @@ def write_markdown(conf: dict, filename: str) -> None:
 
                 # <input_id>.required (optional)
                 required = v["required"] if "required" in v else False
-                required = "yes" if required else "no" 
+                required = "yes" if required else "no"
 
                 # Write markdown line
                 f.write(f"|{input_id}|{desc}|{default}|{required}|\n")
@@ -80,3 +86,8 @@ def write_markdown(conf: dict, filename: str) -> None:
 if __name__ == "__main__":
     conf = read_action_yaml(ACTION_YAML_FILE)
     write_markdown(conf, OUTPUT_MD_FILE)
+
+
+class ActionMarkdown:
+    def __init__(self):
+        pass
