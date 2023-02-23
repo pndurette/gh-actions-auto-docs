@@ -5,12 +5,13 @@ import sys
 import markdown
 import yaml
 
-if "ACTION_YAML" not in os.environ:
-    print("Missing ACTION_YAML environment varirable!")
-    sys.exit(1)
 
-if "OUTPUT_MD" not in os.environ:
-    print("Missing OUTPUT_MD environment varirable!")
+try:
+    # Read inputs
+    ACTION_YAML_FILE = os.environ["ACTION_YAML_FILE"]
+    OUTPUT_MD_FILE = os.environ["OUTPUT_MD_FILE"]
+except KeyError as e:
+    print(f"Missing {str(e)} environment varirable!")
     sys.exit(1)
 
 
@@ -34,10 +35,10 @@ def markdown_to_github_html_for_table(md: str) -> str:
     # Strip <code ..> and </code> html tags
     # The 'fenced_code' python-markdown extension renders markdown
     # code blocks as <pre><code ...></code></pre> but GitHub will only
-    # render code blocks preperly in tables as <pre></pre>
+    # render code blocks preperly in tables as <pre></pre
     md = re.sub("<code.*?>|<\/code>", "", md)
 
-    # Convert remainling newlines to HTML breaks <br />
+    # Convert remaining newlines to HTML breaks <br />
     # i.e. within multi-line html elements such as <p> or <pre>
     md = "<br />".join(md.splitlines())
 
@@ -62,11 +63,10 @@ def write_markdown(conf: dict, filename: str) -> None:
 
                 # <id>.required (optional)
                 required = v["required"] if "required" in v else False
-                required = f"`{str(required).lower()}`"
+                required = "yes" if required else "no"
 
                 # <id>.default (optional)
-                default = v["default"] if "default" in v else "N/A"
-                default = f"`{default}`"
+                default = f"`{v['default']}`" if "default" in v else "n/a"
 
                 # <id>.depreciationMessage (optional) TODO
 
@@ -78,5 +78,5 @@ def write_markdown(conf: dict, filename: str) -> None:
 
 
 if __name__ == "__main__":
-    conf = read_action_yaml(os.environ["ACTION_YAML"])
-    write_markdown(conf, os.environ["OUTPUT_MD"])
+    conf = read_action_yaml(ACTION_YAML_FILE)
+    write_markdown(conf, OUTPUT_MD_FILE)
