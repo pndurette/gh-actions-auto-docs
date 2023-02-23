@@ -65,8 +65,11 @@ def write_markdown(conf: dict, filename: str) -> None:
 
                 # <input_id>.description (required)
                 # <input_id>.deprecationMessage (optional)
-                if "deprecationMessage" in v:
-                    desc = f"{v['description']}\n\n**Depricated:** {v['deprecationMessage']}"
+                desc = (
+                    f"{v['description']}\n\n**Depricated:** {v['deprecationMessage']}"
+                    if "deprecationMessage" in v
+                    else v["description"]
+                )
                 desc = markdown_to_github_html_for_table(desc)
 
                 # <input_id>.default (optional)
