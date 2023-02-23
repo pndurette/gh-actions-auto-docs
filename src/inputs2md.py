@@ -49,22 +49,18 @@ def write_markdown(conf: dict, filename: str) -> None:
     try:
         with open(filename, "w") as f:
             # Header
-            f.write("|Input|Description|Default|:Required:|\n")
-            f.write("|-----|-----------|-------|----------|\n")
+            f.write("|Input|Description|Default|Required|\n")
+            f.write("|-----|-----------|-------|:------:|\n")
 
             # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputs
             for k, v in conf["inputs"].items():
                 # <input_id> (required)
-                # <input_id>.deprecationMessage (optional)
                 input_id = f"`{k}`"
-                if "deprecationMessage" in v:
-                    input_id = (
-                        f"{input_id}\n\n**Depricated:** {v['deprecationMessage']}"
-                    )
-                    input_id = markdown_to_github_html_for_table(input_id)
 
                 # <input_id>.description (required)
-                desc = v["description"]
+                # <input_id>.deprecationMessage (optional)
+                if "deprecationMessage" in v:
+                    desc = f"{v['description']}\n\n**Depricated:** {v['deprecationMessage']}"
                 desc = markdown_to_github_html_for_table(desc)
 
                 # <input_id>.default (optional)
@@ -72,10 +68,10 @@ def write_markdown(conf: dict, filename: str) -> None:
 
                 # <input_id>.required (optional)
                 required = v["required"] if "required" in v else False
-                required = "yes" if required else "no"
+                required = "yes" if required else "no" 
 
                 # Write markdown line
-                f.write(f"|{input_id}|{desc}|{required}|{default}|\n")
+                f.write(f"|{input_id}|{desc}|{default}|{required}|\n")
     except Exception as e:
         print("Error:", str(e))
         sys.exit(1)
