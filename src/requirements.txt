@@ -1,2 +1,0 @@
-PyYAML==6.0
-Markdown==3.4.1
