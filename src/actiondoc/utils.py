@@ -10,7 +10,7 @@ def markdown_to_github_html_for_table(md: str) -> str:
     (e.g. code blocks)
     """
 
-    # If the description is one line, it will be rendered as-is
+    # If the Markdown is one line, it can be rendered as-is
     if not "\n" in md:
         return md
 
