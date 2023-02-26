@@ -11,7 +11,7 @@ def markdown_to_github_html_for_table(md: str) -> str:
     """
 
     # If the Markdown is one line, it can be rendered as-is
-    if not "\n" in md:
+    if len(md.splitlines()) == 1:
         return md
 
     # Convert markdown to html
