@@ -9,6 +9,11 @@ def markdown_to_github_html_for_table(md: str) -> str:
     correctly in GitHub flavoured Markdown table cells.
     (e.g. code blocks)
     """
+
+    # If the description is one line, it will be rendered as-is
+    if not "\n" in md:
+        return md
+
     # Convert markdown to html
     # Support code blocks w/ fenced_code
     md = markdown.markdown(md, extensions=["fenced_code"])

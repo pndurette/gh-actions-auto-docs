@@ -15,7 +15,7 @@
 ### Outputs
 |Output|Description|
 |------|-----------|
-|`test1`|<p>a test1</p>|
+|`test1`|a test1|
 <!--doc_end-->
 
 ### Licence

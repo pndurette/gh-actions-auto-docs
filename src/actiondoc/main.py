@@ -1,14 +1,26 @@
 import re
+import logging
 
 import yaml
 
 from .utils import markdown_to_github_html_for_table
 
-# https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputs
+# Logger
+log = logging.getLogger(__name__)
+log.addHandler(logging.NullHandler())
 
 
 class ActionDoc:
+    """A GitHub Action Markdown docs generator"""
+
     def __init__(self, action_file: str):
+        """Instantiates ActionDoc and loads Action configuration
+
+        https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
+
+        Args:
+            action_file: the GitHub Action action.yml file to read
+        """
         self.conf = self._load(filename=action_file)
 
     def _load(self, filename: str) -> str:
@@ -133,16 +145,22 @@ class ActionDoc:
         """
         md = ""
 
+        # Add inputs
         if include_inputs:
             md += f"{'#' * heading_size} Inputs"
             md += "\n"
             md += self.inputs_markdown_table()
             md += "\n"
 
+        # Add output
         if include_outputs:
             md += f"{'#' * heading_size} Outputs"
             md += "\n"
             md += self.outputs_markdown_table()
+
+        # Debug
+        for index, line in enumerate(md.split("\n")):
+            logging.debug(f"{index:03}: {line}")
 
         return md
 
@@ -188,8 +206,6 @@ class ActionDoc:
         with open(target_file, "r+") as f:
             contents = f.read()
             contents = marker_regex.sub("\n" + markdown_to_insert + "\n", contents)
-
-            print(contents)
 
             f.seek(0)
             f.write(contents)
