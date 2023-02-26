@@ -1,5 +1,5 @@
-import re
 import logging
+import re
 
 import yaml
 
@@ -13,36 +13,58 @@ log.addHandler(logging.NullHandler())
 class ActionDoc:
     """A GitHub Action Markdown docs generator"""
 
-    def __init__(self, action_file: str):
+    def __init__(
+        self,
+        action_file: str,
+        include_inputs: bool = True,
+        include_outputs: bool = True,
+        heading_size: int = 3,
+        target_file: str = "README.md",
+        marker_start: str = "<!--doc_begin-->",
+        marker_end: str = "<!--doc_end-->",
+    ):
         """Instantiates ActionDoc and loads Action configuration
 
         https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
 
         Args:
             action_file: the GitHub Action action.yml file to read
+            include_inputs: if the 'inputs' section should be included
+            include_outputs: if the 'outputs' section should be included
+            heading_size: the Markdown heading size for the section titles
+            target_file: the name of the file in which the Markdown
+                substitution will take place
+            marker_start: the opening marker from which the substitution
+                will take place
+            marker_end: the closing marker to which the substitution
+                will take place
         """
-        self.conf = self._load(filename=action_file)
+        # Arguments
+        self.include_inputs = include_inputs
+        self.include_outputs = include_outputs
+        self.heading_size = heading_size
+        self.target_file = target_file
+        self.marker_start = marker_start
+        self.marker_end = marker_end
+
+        # Action config
+        self.config = self._load(filename=action_file)
+
+        # Debug (arguments)
+        for k, v in locals().items():
+            if k == "self":
+                continue
+            log.debug(f"Arg: {k} = '{v}'")
+
+        # Debug (Action config)
+        log.debug(f"Action configuration: {self.config}")
 
     def _load(self, filename: str) -> str:
         """Loads a YAML file"""
         with open(filename, "r") as f:
             return yaml.safe_load(f)
 
-    def _inputs(self) -> dict:
-        """Loads the 'inputs' of the Action configuration"""
-        try:
-            return self.conf["inputs"]
-        except KeyError as e:
-            raise NoSectionException(e)
-
-    def _outputs(self) -> dict:
-        """Loads the 'outputs' of the Action configuration"""
-        try:
-            return self.conf["outputs"]
-        except KeyError as e:
-            raise NoSectionException(e)
-
-    def inputs_markdown_table(self) -> str:
+    def _inputs_markdown_table(self, config: dict) -> str:
         """Generates the Action's 'inputs' as a Markdown table
 
         Generates a GitHub-flavoured markdown table of
@@ -50,12 +72,17 @@ class ActionDoc:
         for the 'description' field by converting to specific minified HTML
         that GitHub is known to render correctly.
 
+        Args:
+            config: the Action configuration
+
         Returns:
             Markdown table of the Action's inputs
         """
         try:
-            inputs_conf = self._inputs()
-        except NoSectionException as e:
+            inputs_config = config["inputs"]
+            log.info(f"Inputs: {len(inputs_config)}")
+        except KeyError:
+            log.info(f"Inputs: None")
             return "None"
 
         rows = []
@@ -64,7 +91,7 @@ class ActionDoc:
         rows.append("|Input|Description|Default|Required|")
         rows.append("|-----|-----------|-------|:------:|")
 
-        for k, v in inputs_conf.items():
+        for k, v in inputs_config.items():
             # <input_id> (required)
             input_id = f"`{k}`"
 
@@ -88,7 +115,7 @@ class ActionDoc:
         # Join rows with newlines
         return "\n".join(rows)
 
-    def outputs_markdown_table(self) -> str:
+    def _outputs_markdown_table(self, config: dict) -> str:
         """Generates the Action's 'outputs' as a Markdown table
 
         Generates a GitHub-flavoured markdown table of
@@ -96,12 +123,17 @@ class ActionDoc:
         for the 'description' field by converting to specific minified HTML
         that GitHub is known to render correctly.
 
+        Args:
+            config: the Action configuration
+
         Returns:
             Markdown table of the Action's outputs
         """
         try:
-            outputs_conf = self._outputs()
-        except NoSectionException as e:
+            outputs_config = config["outputs"]
+            log.info(f"Outputs: {len(outputs_config)}")
+        except KeyError:
+            log.info(f"Outputs: None")
             return "None"
 
         rows = []
@@ -110,7 +142,7 @@ class ActionDoc:
         rows.append("|Output|Description|")
         rows.append("|------|-----------|")
 
-        for k, v in outputs_conf.items():
+        for k, v in outputs_config.items():
             # <output_id> (required)
             output_id = f"`{k}`"
 
@@ -123,9 +155,7 @@ class ActionDoc:
         # Join rows with newlines
         return "\n".join(rows)
 
-    def markdown(
-        self, include_inputs=True, include_outputs=True, heading_size=3
-    ) -> str:
+    def _markdown(self) -> str:
         """Generates the full Action configuration as Markdown
 
         Generates a Markdown string of the following structure:
@@ -135,82 +165,57 @@ class ActionDoc:
         <outputs title>
         <outputs Markdown table>
 
-        Args:
-            include_inputs: if the 'inputs' section should be included
-            include_outputs: if the 'outputs' section should be included
-            heading_size: the Markdown heading size for the section titles
-
         Returns:
             The full Markdown of the Action configuration
         """
         md = ""
 
         # Add inputs
-        if include_inputs:
-            md += f"{'#' * heading_size} Inputs"
+        if self.include_inputs:
+            md += f"{'#' * self.heading_size} Inputs"
             md += "\n"
-            md += self.inputs_markdown_table()
+            md += self._inputs_markdown_table(self.config)
             md += "\n"
 
         # Add output
-        if include_outputs:
-            md += f"{'#' * heading_size} Outputs"
+        if self.include_outputs:
+            md += f"{'#' * self.heading_size} Outputs"
             md += "\n"
-            md += self.outputs_markdown_table()
+            md += self._outputs_markdown_table(self.config)
 
         # Debug
         for index, line in enumerate(md.splitlines()):
-            logging.debug(f"{index:03}: {line}")
+            log.debug(f"Markdown line {index:03}: {line}")
 
         return md
 
-    def insert_markdown(
-        self,
-        include_inputs: bool = True,
-        include_outputs: bool = True,
-        heading_size: int = 3,
-        target_file: str = "README.md",
-        marker_start: str = "<!--doc_begin-->",
-        marker_end: str = "<!--doc_end-->",
-    ) -> None:
+    def _full_document(self) -> str:
         """Inserts the Markdown between two markers in a file
 
         Inserts or replaces the lines between two markers in a file with the
         generated Action documentation markdown.
 
-        Args:
-            include_inputs: if the 'inputs' section should be included
-            include_outputs: if the 'outputs' section should be included
-            heading_size: the Markdown heading size for the section titles
-            target_file: the name of the file in which the insert will take place
-            marker_start: the opening marker from which the insert will take place
-            marker_end: the closing marker to which the insert will take place
+        Returns:
+            the full substituted document
         """
 
         # Prepare markers for regex
-        marker_start = re.escape(marker_start)
-        marker_end = re.escape(marker_end)
+        marker_start = re.escape(self.marker_start)
+        marker_end = re.escape(self.marker_end)
 
         # Compile regex
         marker_regex = re.compile(rf"(?<={marker_start}).*(?={marker_end})", re.DOTALL)
 
-        # Generate markdown to insert
-        markdown_to_insert = self.markdown(
-            include_inputs=include_inputs,
-            include_outputs=include_outputs,
-            heading_size=heading_size,
-        )
-
-        # Open file for read/write and insert markdown between markers
+        # Generate the final document (insert Markdown between markers)
         # (wrapping in newlines to make sure the markers stay on their own line)
-        with open(target_file, "r+") as f:
-            contents = f.read()
-            contents = marker_regex.sub("\n" + markdown_to_insert + "\n", contents)
+        with open(self.target_file, "r") as f:
+            document = marker_regex.sub("\n" + self._markdown() + "\n", f.read())
 
-            f.seek(0)
-            f.write(contents)
-            f.truncate()
+        return document
 
-
-class NoSectionException(Exception):
-    pass
+    def rewrite(self):
+        """Writes the substituted to file"""
+        full_document = self._full_document()
+        with open(self.target_file, "w") as f:
+            f.write(full_document)
+            log.info(f"Wrote to '{self.target_file}'")
