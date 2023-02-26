@@ -21,3 +21,4 @@ action = Action(ACTION_YAML_FILE)
 # print(action.outputs_markdown_table())
 
 print(action.markdown())
+action.insert_markdown("README2.md")
