@@ -159,7 +159,7 @@ class ActionDoc:
             md += self.outputs_markdown_table()
 
         # Debug
-        for index, line in enumerate(md.split("\n")):
+        for index, line in enumerate(md.splitlines()):
             logging.debug(f"{index:03}: {line}")
 
         return md
