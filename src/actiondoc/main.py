@@ -1,25 +1,15 @@
-import yaml
 import re
+
+import yaml
 
 from .utils import markdown_to_github_html_for_table
 
 # https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions#inputs
 
 
-class Action:
-    def __init__(
-        self,
-        action_file: str,
-        include_inputs: bool = True,
-        include_outputs: bool = True,
-        heading_size: int = 3,
-    ):
+class ActionDoc:
+    def __init__(self, action_file: str):
         self.conf = self._load(filename=action_file)
-        self.markdown = self.markdown(
-            include_inputs=include_inputs,
-            include_outputs=include_outputs,
-            heading_size=heading_size,
-        )
 
     def _load(self, filename: str) -> str:
         """Loads a YAML file"""
@@ -158,6 +148,9 @@ class Action:
 
     def insert_markdown(
         self,
+        include_inputs: bool = True,
+        include_outputs: bool = True,
+        heading_size: int = 3,
         target_file: str = "README.md",
         marker_start: str = "<!--doc_begin-->",
         marker_end: str = "<!--doc_end-->",
@@ -168,21 +161,35 @@ class Action:
         generated Action documentation markdown.
 
         Args:
+            include_inputs: if the 'inputs' section should be included
+            include_outputs: if the 'outputs' section should be included
+            heading_size: the Markdown heading size for the section titles
             target_file: the name of the file in which the insert will take place
             marker_start: the opening marker from which the insert will take place
             marker_end: the closing marker to which the insert will take place
         """
 
+        # Prepare markers for regex
         marker_start = re.escape(marker_start)
         marker_end = re.escape(marker_end)
 
-        marker_regex = re.compile(
-            rf"(?<={marker_start}\n).*(?=\n{marker_end})", re.DOTALL
+        # Compile regex
+        marker_regex = re.compile(rf"(?<={marker_start}).*(?={marker_end})", re.DOTALL)
+
+        # Generate markdown to insert
+        markdown_to_insert = self.markdown(
+            include_inputs=include_inputs,
+            include_outputs=include_outputs,
+            heading_size=heading_size,
         )
 
+        # Open file for read/write and insert markdown between markers
+        # (wrapping in newlines to make sure the markers stay on their own line)
         with open(target_file, "r+") as f:
             contents = f.read()
-            contents = marker_regex.sub(self.markdown, contents)
+            contents = marker_regex.sub("\n" + markdown_to_insert + "\n", contents)
+
+            print(contents)
 
             f.seek(0)
             f.write(contents)

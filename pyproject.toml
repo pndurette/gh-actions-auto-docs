@@ -1,5 +1,5 @@
 [project]
-name = "pyaction"
+name = "actiondoc"
 version = "0.0.1"
 description = ""
 authors = [{name = "Pierre Nicolas Durette", email = "pndurette@gmail.com"}]
@@ -13,10 +13,4 @@ dependencies = [
 [project.optional-dependencies]
 tests = [
     "pytest ~= 7.2",
-]
-
-[tool.coverage.run]
-omit = [
-    "gtts/tests/*",
-    "gtts/tokenizer/tests/*",
 ]
