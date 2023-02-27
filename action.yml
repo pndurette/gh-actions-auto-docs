@@ -54,7 +54,7 @@ inputs:
   git_commit_message:
     description: Commit message
     required: false
-    default: "terraform-docs: automated action"
+    default: "GitHub Action auto-doc"
 
 runs:
   using: "composite"
@@ -92,6 +92,6 @@ runs:
       run: |
         git config user.name "${GIT_PUSH_USER_NAME}""
         git config user.email "${GIT_PUSH_USER_NAME}"
-        git add "${TARGET_FILE}""
+        git add "${TARGET_FILE}"
         git commit -m "${GIT_COMMIT_MESSAGE}"
         git push
