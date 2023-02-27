@@ -22,7 +22,7 @@ jobs:
     - name: Python Install
       run: |
         pip install --upgrade pip 
-        pip install -e ".[tests]"
+        pip install ".[tests]"
     - name: Run Tests
       run: |
         pytest -vv
