@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # Configure logging
     # Automatically enable debug when it is enabled in GitHub Actions:
     # https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging
-    if os.environ.get("ACTIONS_RUNNER_DEBUG") == "true":
+    if os.environ.get("ACTIONS_STEP_DEBUG") == "true":
         log_level = logging.DEBUG
     else:
         log_level = logging.INFO

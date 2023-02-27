@@ -90,8 +90,8 @@ runs:
         TARGET_FILE: ${{ inputs.target_file }}
         GIT_COMMIT_MESSAGE: ${{ inputs.git_commit_message }}
       run: |
-        git config user.name "${GIT_PUSH_USER_NAME}""
-        git config user.email "${GIT_PUSH_USER_NAME}"
-        git add "${TARGET_FILE}"
-        git commit -m "${GIT_COMMIT_MESSAGE}"
-        git push
+        echo git config user.name "${GIT_PUSH_USER_NAME}""
+        echo git config user.email "${GIT_PUSH_USER_NAME}"
+        echo git add "${TARGET_FILE}"
+        echo git commit -m "${GIT_COMMIT_MESSAGE}" "${TARGET_FILE}"
+        echo git push
