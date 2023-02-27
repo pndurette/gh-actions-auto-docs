@@ -61,6 +61,7 @@ runs:
         MARKER_START: ${{ inputs.marker_start }}
         MARKER_END: ${{ inputs.marker_end }}
       run: python -m actiondoc
+    # Test
     - shell: bash
       run: |
         ls -la

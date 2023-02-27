@@ -1,0 +1,20 @@
+name: Generate Action Doc
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+  # Will need to be able to write when commits
+
+jobs:
+  doc:
+    name: Doc
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Generate Doc
+      uses: ./
