@@ -5,8 +5,8 @@ on:
     branches: ["main"]
 
 permissions:
-  contents: read
-  # Will need to be able to write when commits
+  # Required to push the changes
+  contents: write
 
 jobs:
   doc:
@@ -18,5 +18,3 @@ jobs:
       uses: actions/checkout@v3
     - name: Generate Doc
       uses: ./
-      with:
-        git-push: false

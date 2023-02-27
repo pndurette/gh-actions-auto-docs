@@ -39,37 +39,36 @@ inputs:
     description: Test
     required: false
     default: "<!--doc_end-->"
-  git-push:
+  git_push:
     description: If true it will commit and push the changes
     required: false
     default: "false"
-  git-push-user-name:
+  git_push_user_name:
     description: If empty the name of the GitHub Actions bot will be used (i.e. `github-actions[bot]`)
     required: false
-    default: ""
-  git-push-user-email:
+    default: "github-actions[bot]"
+  git_push_user_email:
     description: If empty the no-reply email of the GitHub Actions bot will be used (i.e. `github-actions[bot]@users.noreply.github.com`)
     required: false
-    default: ""
-  git-commit-message:
+    default: "github-actions[bot]@users.noreply.github.com"
+  git_commit_message:
     description: Commit message
     required: false
     default: "terraform-docs: automated action"
-  git-push-sign-off:
-    description: If true it will sign-off commit
-    required: false
-    default: "false"
 
 runs:
   using: "composite"
   steps:
+    # Setup Python
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
+    # Install Python
     - shell: bash
       run: |
         pip install --upgrade pip 
         pip install .
+    # Run
     - shell: bash
       env:
         ACTION_YAML_FILE: ${{ inputs.action_yaml_file }}
@@ -81,11 +80,18 @@ runs:
         MARKER_START: ${{ inputs.marker_start }}
         MARKER_END: ${{ inputs.marker_end }}
       run: python -m actiondoc
-    # Test
+    # Git Push
+    # See: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
     - shell: bash
+      if: ${{ fromJSON(inputs.git_push) }}
+      env:
+        GIT_PUSH_USER_NAME: ${{ inputs.git_push_user_name}}
+        GIT_PUSH_USER_EMAIL: ${{ inputs.git_push_user_email }}
+        TARGET_FILE: ${{ inputs.target_file }}
+        GIT_COMMIT_MESSAGE: ${{ inputs.git_commit_message }}
       run: |
-        ls -la
-        cat README.md
-    - shell: bash
-      if: ${{ fromJSON(inputs.git-push) }}
-      run: echo "Will push"
+        git config user.name "${GIT_PUSH_USER_NAME}""
+        git config user.email "${GIT_PUSH_USER_NAME}"
+        git add "${TARGET_FILE}""
+        git commit -m "${GIT_COMMIT_MESSAGE}"
+        git push
