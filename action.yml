@@ -87,5 +87,5 @@ runs:
         ls -la
         cat README.md
     - shell: bash
-      if: ${{ inputs.git-push }}
+      if: ${{ fromJSON(inputs.git-push) }}
       run: echo "Will push"
