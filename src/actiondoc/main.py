@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 
-class actionDoc:
+class ActionDoc:
     """A GitHub Action Markdown docs generator"""
 
     def __init__(
