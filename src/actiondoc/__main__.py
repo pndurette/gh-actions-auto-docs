@@ -22,7 +22,7 @@ REQUIRED_ENV_VARS = [
 
 
 def _load_env_vars():
-    """ "Loads required environment variables
+    """Loads required environment variables
 
     Loads and validates variables from environment.
     If one or more is missing, error out with the list of missing
