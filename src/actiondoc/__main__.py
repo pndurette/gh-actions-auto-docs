@@ -14,6 +14,7 @@ REQUIRED_ENV_VARS = [
     "INCLUDE_INPUTS",
     "INCLUDE_OUTPUTS",
     "HEADING_SIZE",
+    "TEMPLATE_FILE",
     "TARGET_FILE",
     "MARKER_START",
     "MARKER_END",
@@ -59,11 +60,11 @@ def main():
         include_inputs=json.loads(config["INCLUDE_INPUTS"].lower()),
         include_outputs=json.loads(config["INCLUDE_OUTPUTS"].lower()),
         heading_size=int(config["HEADING_SIZE"]),
-        target_file=config["TARGET_FILE"],
+        template_file=config["TEMPLATE_FILE"],
         marker_start=config["MARKER_START"],
         marker_end=config["MARKER_END"],
     )
-    action_doc.rewrite()
+    action_doc.save(config["TARGET_FILE"])
 
 
 if __name__ == "__main__":

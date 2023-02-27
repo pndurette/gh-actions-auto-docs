@@ -1,16 +1,174 @@
 import os
+from tempfile import NamedTemporaryFile
+
+import pytest
 
 from actiondoc import ActionDoc
 
-# Test simple inputs (one-line desc)
-# Test simple outputs (one-line desc)
-# Test an insert (anchor with nothing in-between)
-# Test an insert (anchor with lines in-between)
+# Default options to use when they're not directly tested
+DEFAULT_OPTIONS = {
+    "include_inputs": True,
+    "include_outputs": True,
+    "heading_size": 3,
+    "marker_start": "<!--start_test-->",
+    "marker_end": "<!--end_test-->",
+}
 
 
-def test_inputs_simple():
-    assert True
+@pytest.fixture()
+def dummy_action_file():
+    """Generate a dummy action_file yaml for ActionDoc
+
+    ActionDoc requires an actual yaml file as its 'action_file'
+    Generate a fake file (but real on disk). Tests can then override
+    the object attribute directly instead of loading from a real file.
+    """
+    action_file = NamedTemporaryFile("w")
+    action_file.write("test:")
+    yield action_file.name
+    action_file.close()
 
 
-def test_outputs_simple():
-    assert True
+def test_input_simple(dummy_action_file):
+    """Test simple (single-line values) input to Markdown"""
+    action_config = {"inputs": {"in1": {"description": "desc"}}}
+    expected_md = """|Input|Description|Default|Required|
+|-----|-----------|-------|:------:|
+|`in1`|desc|n/a|no|"""
+
+    ad = ActionDoc(action_file=dummy_action_file, **DEFAULT_OPTIONS)
+    assert ad._get_markdown_table_inputs(action_config) == expected_md
+
+
+def test_input_optionals(dummy_action_file):
+    """Test simple (single-line values with optional values) input to Markdown"""
+    action_config = {
+        "inputs": {"in1": {"description": "desc", "default": "abc", "required": True}}
+    }
+    expected_md = """|Input|Description|Default|Required|
+|-----|-----------|-------|:------:|
+|`in1`|desc|`abc`|yes|"""
+
+    ad = ActionDoc(action_file=dummy_action_file, **DEFAULT_OPTIONS)
+    assert ad._get_markdown_table_inputs(action_config) == expected_md
+
+
+def test_input_depreciation(dummy_action_file):
+    """Test simple (with optional input depreciation) input to Markdown"""
+    action_config = {
+        "inputs": {"in1": {"description": "desc", "deprecationMessage": "abc"}}
+    }
+    expected_md = """|Input|Description|Default|Required|
+|-----|-----------|-------|:------:|
+|`in1`|<p>desc</p><p><strong>Depricated:</strong> abc</p>|n/a|no|"""
+
+    ad = ActionDoc(action_file=dummy_action_file, **DEFAULT_OPTIONS)
+    assert ad._get_markdown_table_inputs(action_config) == expected_md
+
+
+def test_output_simple(dummy_action_file):
+    """Test simple (single-line values) output to Markdown"""
+    action_config = {"outputs": {"out1": {"description": "desc"}}}
+    expected_md = """|Output|Description|
+|------|-----------|
+|`out1`|desc|"""
+
+    ad = ActionDoc(action_file=dummy_action_file, **DEFAULT_OPTIONS)
+    assert ad._get_markdown_table_outputs(action_config) == expected_md
+
+
+def test_substitution_empty(dummy_action_file):
+    """Test full template sub when there's nothing between markers"""
+    action_config = {
+        "inputs": {"in1": {"description": "desc"}},
+        "outputs": {"out1": {"description": "desc"}},
+    }
+    template_doc = """Text before
+
+<!--start_test-->
+<!--end_test-->
+
+Text after"""
+    expected_doc = """Text before
+
+<!--start_test-->
+### Inputs
+|Input|Description|Default|Required|
+|-----|-----------|-------|:------:|
+|`in1`|desc|n/a|no|
+### Outputs
+|Output|Description|
+|------|-----------|
+|`out1`|desc|
+<!--end_test-->
+
+Text after"""
+
+    ad = ActionDoc(action_file=dummy_action_file, **DEFAULT_OPTIONS)
+    ad.action_config = action_config  # Override action config
+    ad.template = template_doc  # Override template
+
+    assert ad.generate() == expected_doc
+
+
+def test_substitution_content(dummy_action_file):
+    """Test full template sub when there's content between markers"""
+    action_config = {
+        "inputs": {"in1": {"description": "desc"}},
+        "outputs": {"out1": {"description": "desc"}},
+    }
+    template_doc = """Text before
+
+<!--start_test-->
+Some
+Lines
+That
+Should
+Go
+<!--end_test-->
+
+Text after"""
+    expected_doc = """Text before
+
+<!--start_test-->
+### Inputs
+|Input|Description|Default|Required|
+|-----|-----------|-------|:------:|
+|`in1`|desc|n/a|no|
+### Outputs
+|Output|Description|
+|------|-----------|
+|`out1`|desc|
+<!--end_test-->
+
+Text after"""
+
+    ad = ActionDoc(action_file=dummy_action_file, **DEFAULT_OPTIONS)
+    ad.action_config = action_config  # Override action config
+    ad.template = template_doc  # Override template
+
+    assert ad.generate() == expected_doc
+
+
+def test_substitution_no_marker(dummy_action_file):
+    """Test full template sub when there's no markers"""
+    action_config = {
+        "inputs": {"in1": {"description": "desc"}},
+        "outputs": {"out1": {"description": "desc"}},
+    }
+    template_doc = """Text before
+
+No Marker
+
+Text after"""
+    expected_doc = """Text before
+
+No Marker
+
+Text after"""
+
+    ad = ActionDoc(action_file=dummy_action_file, **DEFAULT_OPTIONS)
+    ad.action_config = action_config  # Override action config
+    ad.template = template_doc  # Override template
+
+    assert ad.generate() == expected_doc

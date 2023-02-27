@@ -19,14 +19,14 @@ def markdown_to_github_html_for_table(md: str) -> str:
     md = markdown.markdown(md, extensions=["fenced_code"])
 
     # Minify html tags
-    md = re.sub(">\s*<", "><", md)
+    md = re.sub(r">\s*<", "><", md)
 
     # Strip <code ..> and </code> html tags when directly inside <pre></pre>
     # The 'fenced_code' python-markdown extension renders markdown
     # code blocks as <pre><code ...></code></pre> but GitHub will only
     # render code blocks preperly in tables as <pre></pre>.
     # <code></code> renders as (inline) code.
-    md = re.sub("(?<=<pre>)<code.*?>|<\/code>(?=<\/pre>)", "", md)
+    md = re.sub(r"(?<=<pre>)<code.*?>|<\/code>(?=<\/pre>)", "", md)
 
     # Convert remaining newlines to HTML breaks <br />
     # i.e. within multi-line html elements such as <p> or <pre>

@@ -15,11 +15,11 @@ class ActionDoc:
 
     def __init__(
         self,
-        action_file: str,
+        action_file: TextIO,
         include_inputs: bool = True,
         include_outputs: bool = True,
         heading_size: int = 3,
-        target_file: str = "README.md",
+        template_file: str = "README.md",
         marker_start: str = "<!--doc_begin-->",
         marker_end: str = "<!--doc_end-->",
     ):
@@ -43,12 +43,14 @@ class ActionDoc:
         self.include_inputs = include_inputs
         self.include_outputs = include_outputs
         self.heading_size = heading_size
-        self.target_file = target_file
         self.marker_start = marker_start
         self.marker_end = marker_end
 
         # Action config
-        self.config = self._load(filename=action_file)
+        self.action_config = self._load_yaml(action_file)
+
+        # Template file
+        self.template = self._load_text(template_file)
 
         # Debug (arguments)
         for k, v in locals().items():
@@ -57,14 +59,19 @@ class ActionDoc:
             log.debug(f"Arg: {k} = '{v}'")
 
         # Debug (Action config)
-        log.debug(f"Action configuration: {self.config}")
+        log.debug(f"Action configuration: {self.action_config}")
 
-    def _load(self, filename: str) -> str:
+    def _load_yaml(self, filename: str) -> dict:
         """Loads a YAML file"""
         with open(filename, "r") as f:
             return yaml.safe_load(f)
 
-    def _inputs_markdown_table(self, config: dict) -> str:
+    def _load_text(self, filename: str) -> str:
+        """Loads a text file"""
+        with open(filename, "r") as f:
+            return f.read()
+
+    def _get_markdown_table_inputs(self, config: dict) -> str:
         """Generates the Action's 'inputs' as a Markdown table
 
         Generates a GitHub-flavoured markdown table of
@@ -115,7 +122,7 @@ class ActionDoc:
         # Join rows with newlines
         return "\n".join(rows)
 
-    def _outputs_markdown_table(self, config: dict) -> str:
+    def _get_markdown_table_outputs(self, config: dict) -> str:
         """Generates the Action's 'outputs' as a Markdown table
 
         Generates a GitHub-flavoured markdown table of
@@ -155,7 +162,7 @@ class ActionDoc:
         # Join rows with newlines
         return "\n".join(rows)
 
-    def _markdown(self) -> str:
+    def _get_full_markdown(self, config: dict) -> str:
         """Generates the full Action configuration as Markdown
 
         Generates a Markdown string of the following structure:
@@ -174,14 +181,14 @@ class ActionDoc:
         if self.include_inputs:
             md += f"{'#' * self.heading_size} Inputs"
             md += "\n"
-            md += self._inputs_markdown_table(self.config)
+            md += self._get_markdown_table_inputs(config)
             md += "\n"
 
         # Add output
         if self.include_outputs:
             md += f"{'#' * self.heading_size} Outputs"
             md += "\n"
-            md += self._outputs_markdown_table(self.config)
+            md += self._get_markdown_table_outputs(config)
 
         # Debug
         for index, line in enumerate(md.splitlines()):
@@ -189,7 +196,7 @@ class ActionDoc:
 
         return md
 
-    def _full_document(self) -> str:
+    def generate(self) -> str:
         """Inserts the Markdown between two markers in a file
 
         Inserts or replaces the lines between two markers in a file with the
@@ -208,14 +215,15 @@ class ActionDoc:
 
         # Generate the final document (insert Markdown between markers)
         # (wrapping in newlines to make sure the markers stay on their own line)
-        with open(self.target_file, "r") as f:
-            document = marker_regex.sub("\n" + self._markdown() + "\n", f.read())
+        document = marker_regex.sub(
+            "\n" + self._get_full_markdown(self.action_config) + "\n", self.template
+        )
 
         return document
 
-    def rewrite(self):
-        """Writes the substituted to file"""
-        full_document = self._full_document()
-        with open(self.target_file, "w") as f:
+    def save(self, filename):
+        """Writes the document to file"""
+        full_document = self.generate()
+        with open(filename, "w") as f:
             f.write(full_document)
-            log.info(f"Wrote to '{self.target_file}'")
+            log.info(f"Wrote to '{filename}'")
