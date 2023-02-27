@@ -1,0 +1,67 @@
+name: GitHub Action Auto-Doc
+author: Pierre Nicolas Durette
+description: A GitHub Action for generating GitHub Action Markdown documentation
+
+branding:
+  color: yellow
+  icon: file-text
+
+inputs:
+  action_yaml_file:
+    description: The path to GitHub Action's `action.yml` file
+    required: false
+    default: ./action.yml
+  include_inputs:
+    description: Test
+    required: false
+    default: "true"
+  include_outputs:
+    description: Test
+    required: false
+    default: "true"
+  heading_size:
+    description: Test
+    required: false
+    default: "3"
+  template_file:
+    description: Test
+    required: false
+    default: ./README.md
+  target_file:
+    description: Test
+    required: false
+    default: ./README.md
+  marker_start:
+    description: Test
+    required: false
+    default: "<!--doc_begin-->"
+  marker_end:
+    description: Test
+    required: false
+    default: "<!--doc_end-->"
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - shell: bash
+      run: |
+        pip install --upgrade pip 
+        pip install .
+    - shell: bash
+      env:
+        ACTION_YAML_FILE: ${{ inputs.action_yaml_file }}
+        INCLUDE_INPUTS: ${{ inputs.include_inputs }}
+        INCLUDE_OUTPUTS: ${{ inputs.include_outputs }}
+        HEADING_SIZE: ${{ inputs.heading_size }}
+        TEMPLATE_FILE: ${{ inputs.template_file }}
+        TARGET_FILE: ${{ inputs.target_file }}
+        MARKER_START: ${{ inputs.marker_start }}
+        MARKER_END: ${{ inputs.marker_end }}
+      run: python -m actiondoc
+    - shell: bash
+      run: |
+        ls -la
+        cat README.md
