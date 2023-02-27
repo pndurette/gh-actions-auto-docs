@@ -39,6 +39,26 @@ inputs:
     description: Test
     required: false
     default: "<!--doc_end-->"
+  git-push:
+    description: If true it will commit and push the changes
+    required: false
+    default: "false"
+  git-push-user-name:
+    description: If empty the name of the GitHub Actions bot will be used (i.e. `github-actions[bot]`)
+    required: false
+    default: ""
+  git-push-user-email:
+    description: If empty the no-reply email of the GitHub Actions bot will be used (i.e. `github-actions[bot]@users.noreply.github.com`)
+    required: false
+    default: ""
+  git-commit-message:
+    description: Commit message
+    required: false
+    default: "terraform-docs: automated action"
+  git-push-sign-off:
+    description: If true it will sign-off commit
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -66,3 +86,6 @@ runs:
       run: |
         ls -la
         cat README.md
+    - shell: bash
+      if: ${{ inputs.git-push }}
+      run: echo "Will push"
