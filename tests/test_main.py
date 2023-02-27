@@ -23,7 +23,7 @@ def dummy_action_file():
     Generate a fake file (but real on disk). Tests can then override
     the object attribute directly instead of loading from a real file.
     """
-    action_file = NamedTemporaryFile("w")
+    action_file = NamedTemporaryFile("w", delete=True)
     action_file.write("test:")
     yield action_file.name
     action_file.close()

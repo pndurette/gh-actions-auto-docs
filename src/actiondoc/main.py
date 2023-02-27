@@ -10,12 +10,12 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 
-class ActionDoc:
+class actionDoc:
     """A GitHub Action Markdown docs generator"""
 
     def __init__(
         self,
-        action_file: TextIO,
+        action_file: str,
         include_inputs: bool = True,
         include_outputs: bool = True,
         heading_size: int = 3,
@@ -23,16 +23,17 @@ class ActionDoc:
         marker_start: str = "<!--doc_begin-->",
         marker_end: str = "<!--doc_end-->",
     ):
-        """Instantiates ActionDoc and loads Action configuration
+        """Load action configuration and template
 
+        For action configuration attributes, see:
         https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
 
         Args:
-            action_file: the GitHub Action action.yml file to read
+            action_file: the GitHub action action.yml file to read
             include_inputs: if the 'inputs' section should be included
             include_outputs: if the 'outputs' section should be included
             heading_size: the Markdown heading size for the section titles
-            target_file: the name of the file in which the Markdown
+            template_file: the name of the file in which the Markdown
                 substitution will take place
             marker_start: the opening marker from which the substitution
                 will take place
@@ -46,7 +47,7 @@ class ActionDoc:
         self.marker_start = marker_start
         self.marker_end = marker_end
 
-        # Action config
+        # action config
         self.action_config = self._load_yaml(action_file)
 
         # Template file
@@ -58,8 +59,8 @@ class ActionDoc:
                 continue
             log.debug(f"Arg: {k} = '{v}'")
 
-        # Debug (Action config)
-        log.debug(f"Action configuration: {self.action_config}")
+        # Debug (action config)
+        log.debug(f"action configuration: {self.action_config}")
 
     def _load_yaml(self, filename: str) -> dict:
         """Loads a YAML file"""
@@ -72,18 +73,18 @@ class ActionDoc:
             return f.read()
 
     def _get_markdown_table_inputs(self, config: dict) -> str:
-        """Generates the Action's 'inputs' as a Markdown table
+        """Generates the action's 'inputs' as a Markdown table
 
         Generates a GitHub-flavoured markdown table of
-        the Action inputs configuration. Supports multi-line Markdown
+        the action inputs configuration. Supports multi-line Markdown
         for the 'description' field by converting to specific minified HTML
         that GitHub is known to render correctly.
 
         Args:
-            config: the Action configuration
+            config: the action configuration
 
         Returns:
-            Markdown table of the Action's inputs
+            Markdown table of the action's inputs
         """
         try:
             inputs_config = config["inputs"]
@@ -123,18 +124,18 @@ class ActionDoc:
         return "\n".join(rows)
 
     def _get_markdown_table_outputs(self, config: dict) -> str:
-        """Generates the Action's 'outputs' as a Markdown table
+        """Generates the action's 'outputs' as a Markdown table
 
         Generates a GitHub-flavoured markdown table of
-        the Action outputs configuration. Supports multi-line Markdown
+        the action outputs configuration. Supports multi-line Markdown
         for the 'description' field by converting to specific minified HTML
         that GitHub is known to render correctly.
 
         Args:
-            config: the Action configuration
+            config: the action configuration
 
         Returns:
-            Markdown table of the Action's outputs
+            Markdown table of the action's outputs
         """
         try:
             outputs_config = config["outputs"]
@@ -163,7 +164,7 @@ class ActionDoc:
         return "\n".join(rows)
 
     def _get_full_markdown(self, config: dict) -> str:
-        """Generates the full Action configuration as Markdown
+        """Generates the full action configuration as Markdown
 
         Generates a Markdown string of the following structure:
         <inputs title>
@@ -172,8 +173,11 @@ class ActionDoc:
         <outputs title>
         <outputs Markdown table>
 
+        Args:
+            config: the action configuration
+
         Returns:
-            The full Markdown of the Action configuration
+            The full Markdown of the action configuration
         """
         md = ""
 
@@ -200,7 +204,7 @@ class ActionDoc:
         """Inserts the Markdown between two markers in a file
 
         Inserts or replaces the lines between two markers in a file with the
-        generated Action documentation markdown.
+        generated action documentation markdown.
 
         Returns:
             the full substituted document
@@ -222,8 +226,12 @@ class ActionDoc:
         return document
 
     def save(self, filename):
-        """Writes the document to file"""
-        full_document = self.generate()
+        """Writes the document to file
+
+        Args:
+            filename: the file to save the resulting document to
+        """
+        document = self.generate()
         with open(filename, "w") as f:
-            f.write(full_document)
+            f.write(document)
             log.info(f"Wrote to '{filename}'")
