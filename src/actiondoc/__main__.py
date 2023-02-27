@@ -54,7 +54,7 @@ def _load_env_vars():
 def main():
     config = _load_env_vars()
 
-    # Use the json to load boolean strings into boolean types
+    # Use json to load boolean strings into boolean types
     action_doc = ActionDoc(
         action_file=config["ACTION_YAML_FILE"],
         include_inputs=json.loads(config["INCLUDE_INPUTS"].lower()),
