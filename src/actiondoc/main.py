@@ -118,7 +118,15 @@ class ActionDoc:
             required = "yes" if required else "no"
 
             # Append markdown rows
-            rows.append(f"|{input_id}|{desc}|{default}|{required}|")
+            # Strip any trailing end-of-line char from the action file
+            # (e.g. trailing \n on multi-line yaml)
+            rows.append(
+                f"|{input_id.rstrip()}"
+                f"|{desc.rstrip()}"
+                f"|{default.rstrip()}"
+                f"|{required.rstrip()}"
+                f"|"
+            )
 
         # Join rows with newlines
         return "\n".join(rows)
@@ -158,7 +166,13 @@ class ActionDoc:
             desc = markdown_to_github_html_for_table(v["description"])
 
             # Append markdown line
-            rows.append(f"|{output_id}|{desc}|")
+            # Strip any trailing end-of-line char from the action file
+            # (e.g. trailing \n on multi-line yaml)
+            rows.append(
+                f"|{output_id.rstrip()}"
+                f"|{desc.rstrip()}"
+                f"|"
+            )
 
         # Join rows with newlines
         return "\n".join(rows)
