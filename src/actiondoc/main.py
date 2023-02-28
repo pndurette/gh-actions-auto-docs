@@ -33,7 +33,7 @@ class ActionDoc:
             include_inputs: if the 'inputs' section should be included
             include_outputs: if the 'outputs' section should be included
             heading_size: the Markdown heading size for the section titles
-            template_file: the name of the file in which the Markdown
+            template_file: the name of the file with which the Markdown
                 substitution will take place
             marker_start: the opening marker from which the substitution
                 will take place

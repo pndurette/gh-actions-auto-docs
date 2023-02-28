@@ -1,6 +1,6 @@
-name: GitHub Action Auto-Doc
+name: GitHub Actions Auto-Doc
 author: Pierre Nicolas Durette
-description: A GitHub Action for generating GitHub Action Markdown documentation
+description: A GitHub Action for generating GitHub Action documentation
 
 branding:
   color: yellow
@@ -8,53 +8,66 @@ branding:
 
 inputs:
   action_yaml_file:
-    description: The path to GitHub Action's `action.yml` file
+    description: The path to the GitHub Action's `action.yml` file
     required: false
     default: ./action.yml
   include_inputs:
-    description: Test
+    description: Whenever to document the action's inputs
     required: false
     default: "true"
   include_outputs:
-    description: Test
+    description: Whenever to document the action's outputs
     required: false
     default: "true"
   heading_size:
-    description: Test
+    description: |
+      The Markdown heading size to use for the documented
+      sections (i.e. number of `#`)
     required: false
     default: "3"
   template_file:
-    description: Test
+    description: The file used as template
     required: false
     default: ./README.md
   target_file:
-    description: Test
+    description: |
+      The resulting file of the template substitution.
+      To update in-place, this can be the same as `template_file`.
     required: false
     default: ./README.md
   marker_start:
-    description: Test
+    description: |
+      The opening marker from which the template substitution
+      will take place
     required: false
     default: "<!--doc_begin-->"
   marker_end:
-    description: Test
+    description: |
+      The closing marker to which the template substitution
+      will take place
     required: false
     default: "<!--doc_end-->"
   git_push:
-    description: If true it will commit and push the changes
+    description: |
+      Whenever to commit and push changes changes to `target_file`
     required: false
     default: "false"
   git_push_user_name:
-    description: If empty the name of the GitHub Actions bot will be used (i.e. `github-actions[bot]`)
+    description: The git user name to commit with
     required: false
     default: "github-actions[bot]"
   git_push_user_email:
-    description: If empty the no-reply email of the GitHub Actions bot will be used (i.e. `github-actions[bot]@users.noreply.github.com`)
+    description: The git user email to commit with
     required: false
     default: "github-actions[bot]@users.noreply.github.com"
   git_commit_message:
-    description: Commit message
+    description: The git commit message
     required: false
-    default: "GitHub Action auto-doc"
+    default: "GitHub Action Auto-Doc"
+  git_commit_signoff:
+    description: Whenever to sign-off the git commit
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -63,12 +76,12 @@ runs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    # Install Python
+    # Install ActionDoc
     - shell: bash
       run: |
         pip install --upgrade pip 
         pip install .
-    # Run
+    # Run ActionDoc
     - shell: bash
       env:
         ACTION_YAML_FILE: ${{ inputs.action_yaml_file }}
@@ -81,17 +94,20 @@ runs:
         MARKER_END: ${{ inputs.marker_end }}
       run: python -m actiondoc
     # Git Push
-    # See: https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
+    # Requires the use of actions/checkout
+    # with "ref: ${{ github.event.pull_request.head.ref }}"
+    # (See: https://github.com/actions/checkout)
     - shell: bash
       if: ${{ fromJSON(inputs.git_push) }}
       env:
         GIT_PUSH_USER_NAME: ${{ inputs.git_push_user_name}}
         GIT_PUSH_USER_EMAIL: ${{ inputs.git_push_user_email }}
-        TARGET_FILE: ${{ inputs.target_file }}
         GIT_COMMIT_MESSAGE: ${{ inputs.git_commit_message }}
+        GIT_COMMIT_SIGNOFF: ${{ fromJSON(inputs.git_commit_signoff) && "-s" || "" }}
+        TARGET_FILE: ${{ inputs.target_file }}
       run: |
         git config user.name "${GIT_PUSH_USER_NAME}"
         git config user.email "${GIT_PUSH_USER_EMAIL}"
         git add "${TARGET_FILE}"
-        git commit -m "${GIT_COMMIT_MESSAGE}" || true
+        git commit ${GIT_COMMIT_SIGNOFF} -m "${GIT_COMMIT_MESSAGE}" || true
         git push || true
