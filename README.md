@@ -8,18 +8,20 @@
 ### Inputs
 |Input|Description|Default|Required|
 |-----|-----------|-------|:------:|
-|`action_yaml_file`|The path to GitHub Action's `action.yml` file|`./action.yml`|no|
-|`include_inputs`|Test|`true`|no|
-|`include_outputs`|Test|`true`|no|
-|`heading_size`|Test|`3`|no|
-|`template_file`|Test|`./README.md`|no|
-|`target_file`|Test|`./README.md`|no|
-|`marker_start`|Test|`<!--doc_begin-->`|no|
-|`marker_end`|Test|`<!--doc_end-->`|no|
-|`git_push`|If true it will commit and push the changes|`false`|no|
-|`git_push_user_name`|If empty the name of the GitHub Actions bot will be used (i.e. `github-actions[bot]`)|`github-actions[bot]`|no|
-|`git_push_user_email`|If empty the no-reply email of the GitHub Actions bot will be used (i.e. `github-actions[bot]@users.noreply.github.com`)|`github-actions[bot]@users.noreply.github.com`|no|
-|`git_commit_message`|Commit message|`GitHub Action auto-doc`|no|
+|`action_yaml_file`|The path to the GitHub Action's `action.yml` file|`./action.yml`|no|
+|`include_inputs`|Whenever to document the action's inputs|`true`|no|
+|`include_outputs`|Whenever to document the action's outputs|`true`|no|
+|`heading_size`|<p>The Markdown heading size to use for the documented<br />sections (i.e. number of <code>#</code>)</p>|`3`|no|
+|`template_file`|The file used as template|`./README.md`|no|
+|`target_file`|<p>The resulting file of the template substitution.<br />To update in-place, this can be the same as <code>template_file</code>.</p>|`./README.md`|no|
+|`marker_start`|<p>The opening marker from which the template substitution<br />will take place</p>|`<!--doc_begin-->`|no|
+|`marker_end`|<p>The closing marker to which the template substitution<br />will take place</p>|`<!--doc_end-->`|no|
+|`git_push`|Whenever to commit and push changes changes to `target_file`
+|`false`|no|
+|`git_push_user_name`|The git user name to commit with|`github-actions[bot]`|no|
+|`git_push_user_email`|The git user email to commit with|`github-actions[bot]@users.noreply.github.com`|no|
+|`git_commit_message`|The git commit message|`GitHub Action Auto-Doc`|no|
+|`git_commit_signoff`|Whenever to sign-off the git commit|`false`|no|
 ### Outputs
 None
 <!--doc_end-->
