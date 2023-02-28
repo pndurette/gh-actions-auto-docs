@@ -93,5 +93,5 @@ runs:
         git config user.name "${GIT_PUSH_USER_NAME}"
         git config user.email "${GIT_PUSH_USER_EMAIL}"
         git add "${TARGET_FILE}"
-        git commit -m "${GIT_COMMIT_MESSAGE}"
-        git push
+        git commit -m "${GIT_COMMIT_MESSAGE}" || true
+        git push || true
