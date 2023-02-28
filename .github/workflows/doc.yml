@@ -9,8 +9,8 @@ permissions:
   contents: write
 
 jobs:
-  doc:
-    name: Doc
+  docs:
+    name: Docs
     runs-on: ubuntu-latest
 
     steps:

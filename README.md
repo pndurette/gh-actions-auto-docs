@@ -10,24 +10,19 @@ name: Generate Action Docs
 on: [pull_request]
 
 permissions:
-  # Required to push the changes
+  # Required to push changes
   contents: write
 
 jobs:
   doc:
-    name: Docs
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
       with:
-        # Required to push the changes
+        # Required to push changes
         ref: ${{ github.event.pull_request.head.ref }}
-    - name: Generate Doc
-      uses: pndurette/gh-actions-auto-docs@v1
-      with:
-        git_push: true
+    - uses: pndurette/gh-actions-auto-docs@v1
 ```
 
 ## Configuration
