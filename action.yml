@@ -103,7 +103,7 @@ runs:
         GIT_PUSH_USER_NAME: ${{ inputs.git_push_user_name}}
         GIT_PUSH_USER_EMAIL: ${{ inputs.git_push_user_email }}
         GIT_COMMIT_MESSAGE: ${{ inputs.git_commit_message }}
-        GIT_COMMIT_SIGNOFF: ${{ fromJSON(inputs.git_commit_signoff) == true && "-s" || "" }}
+        GIT_COMMIT_SIGNOFF: ${{ fromJSON(inputs.git_commit_signoff) && format("-s") || format("") }}
         TARGET_FILE: ${{ inputs.target_file }}
       run: |
         git config user.name "${GIT_PUSH_USER_NAME}"
