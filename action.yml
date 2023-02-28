@@ -65,9 +65,7 @@ inputs:
     required: false
     default: "GitHub Action Auto-Doc"
   git_commit_signoff:
-    description: |
-      Whenever to [sign-off](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---signoff)
-      the git commit
+    description: Whenever to sign-off the git commit
     required: false
     default: "false"
 
