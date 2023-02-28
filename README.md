@@ -20,7 +20,7 @@
 |`git_push_user_name`|The git user name to commit with|`github-actions[bot]`|no|
 |`git_push_user_email`|The git user email to commit with|`github-actions[bot]@users.noreply.github.com`|no|
 |`git_commit_message`|The git commit message|`GitHub Action Auto-Doc`|no|
-|`git_commit_signoff`|<p>Whenever to <a href="https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---signoff">sign-off</a><br />the git commit</p>|`false`|no|
+|`git_commit_signoff`|Whenever to sign-off the git commit|`false`|no|
 
 <!--doc_end-->
 
