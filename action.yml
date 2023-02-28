@@ -1,6 +1,6 @@
-name: GitHub Actions Auto-Doc
+name: GitHub Actions Auto-Docs
 author: Pierre Nicolas Durette
-description: A GitHub Action for generating GitHub Action documentation
+description: A GitHub Action for generating GitHub Actions documentation
 
 branding:
   color: yellow
@@ -63,7 +63,7 @@ inputs:
   git_commit_message:
     description: The git commit message
     required: false
-    default: "GitHub Action Auto-Doc"
+    default: "GitHub Action Auto-Docs"
   git_commit_signoff:
     description: Whenever to sign-off the git commit
     required: false
@@ -76,12 +76,12 @@ runs:
     - uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    # Install ActionDoc
+    # Install ActionDocs
     - shell: bash
       run: |
         pip install --upgrade pip 
         pip install .
-    # Run ActionDoc
+    # Run ActionDocs
     - shell: bash
       env:
         ACTION_YAML_FILE: ${{ inputs.action_yaml_file }}
@@ -92,7 +92,7 @@ runs:
         TARGET_FILE: ${{ inputs.target_file }}
         MARKER_START: ${{ inputs.marker_start }}
         MARKER_END: ${{ inputs.marker_end }}
-      run: python -m actiondoc
+      run: python -m actiondoc # TODO: rename
     # Git Push
     # Requires the use of actions/checkout
     # with "ref: ${{ github.event.pull_request.head.ref }}"

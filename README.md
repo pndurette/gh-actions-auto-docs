@@ -1,8 +1,36 @@
-# auto-doc-action
+# gh-actions-auto-doc
 
-> A GitHub Action for generating GitHub Action markdown documentation
+> A GitHub Action for generating GitHub Action documentation
 
-## Documentation
+## Usage
+
+```yaml
+name: Generate Action Docs
+
+on: [pull_request]
+
+permissions:
+  # Required to push the changes
+  contents: write
+
+jobs:
+  doc:
+    name: Docs
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        # Required to push the changes
+        ref: ${{ github.event.pull_request.head.ref }}
+    - name: Generate Doc
+      uses: pndurette/gh-actions-auto-docs@v1
+      with:
+        git_push: true
+```
+
+## Configuration
 
 <!--doc_begin-->
 ### Inputs
