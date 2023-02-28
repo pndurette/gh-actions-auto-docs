@@ -23,7 +23,7 @@ jobs:
         # Required to push changes
         ref: ${{ github.event.pull_request.head.ref }}
     
-    - uses: pndurette/gh-actions-auto-docs@v1
+    - uses: pndurette/gh-actions-auto-docs@v1 # ✨
 ```
 
 ## Configuration
