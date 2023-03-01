@@ -1,4 +1,4 @@
-name: Generate Action Doc
+name: Generate Action Docs
 
 on:
   pull_request:

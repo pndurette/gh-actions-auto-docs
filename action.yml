@@ -92,9 +92,6 @@ runs:
         TARGET_FILE: ${{ inputs.target_file }}
         MARKER_START: ${{ inputs.marker_start }}
         MARKER_END: ${{ inputs.marker_end }}
-        # Piggyback on GHA's special debug variable
-        # which when set to 'true' will use log level debug
-        ACTIONS_STEP_DEBUG: ${{ vars.ACTIONS_STEP_DEBUG }}
       run: python -m actiondoc # TODO: rename
     # Git Push
     # Requires the use of actions/checkout
