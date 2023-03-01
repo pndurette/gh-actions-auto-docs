@@ -21,7 +21,6 @@ jobs:
       uses: ./
       with:
         include_outputs: false
-        heading_size: 4
         # Using non-default markers so the default
         # markers can be shown in the README.md
         # setup section w/o being substituted!
