@@ -45,7 +45,7 @@ jobs:
 
 ### Configuration
 
-<!--doc_begin-->
+<!--doc_begin_-->
 
 #### Inputs
 |Input|Description|Default|Required|
@@ -64,7 +64,7 @@ jobs:
 |`git_commit_message`|The git commit message|`GitHub Action Auto-Docs`|no|
 |`git_commit_signoff`|Whenever to sign-off the git commit|`false`|no|
 
-<!--doc_end-->
+<!--doc_end_-->
 
 ### Licence
 

@@ -65,7 +65,7 @@ inputs:
     required: false
     default: "GitHub Action Auto-Docs"
   git_commit_signoff:
-    description: Whenever to sign-off the git commit. Test change
+    description: Whenever to sign-off the git commit
     required: false
     default: "false"
 
