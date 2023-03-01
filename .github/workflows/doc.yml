@@ -22,3 +22,8 @@ jobs:
       with:
         include_outputs: false
         heading_size: 4
+        # Using non-default markers so the default
+        # markers can be shown in the README.md
+        # setup section w/o being substituted!
+        marker_start: "<!--doc_begin_-->"
+        marker_end: "<!--doc_end_-->"
