@@ -46,8 +46,7 @@ jobs:
 ## Configuration
 
 <!--doc_begin_-->
-
-#### Inputs
+### Inputs
 |Input|Description|Default|Required|
 |-----|-----------|-------|:------:|
 |`action_yaml_file`|The path to the GitHub Action's `action.yml` file|`./action.yml`|no|
@@ -58,7 +57,7 @@ jobs:
 |`target_file`|<p>The resulting file of the template substitution.<br />To update in-place, this can be the same as <code>template_file</code>.</p>|`./README.md`|no|
 |`marker_start`|<p>The opening marker from which the template substitution<br />will take place</p>|`<!--doc_begin-->`|no|
 |`marker_end`|<p>The closing marker to which the template substitution<br />will take place</p>|`<!--doc_end-->`|no|
-|`git_push`|Whenever to commit and push changes changes to `target_file`|`false`|no|
+|`git_push`|Whenever to commit and push changes changes to `target_file`|`true`|no|
 |`git_push_user_name`|The git user name to commit with|`github-actions[bot]`|no|
 |`git_push_user_email`|The git user email to commit with|`github-actions[bot]@users.noreply.github.com`|no|
 |`git_commit_message`|The git commit message|`GitHub Action Auto-Docs`|no|
