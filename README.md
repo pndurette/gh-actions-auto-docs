@@ -1,35 +1,53 @@
-# gh-actions-auto-doc
+# gh-actions-auto-docs
 
 > A GitHub Action for generating GitHub Action documentation
 
-## Usage
+[![Tests](https://github.com/pndurette/gh-actions-auto-docs/actions/workflows/test.yml/badge.svg)](https://github.com/pndurette/gh-actions-auto-docs/actions/workflows/test.yml)
+
+## Features
+
+
+
+## Setup
+
+1. In your `README.md` (or anywhere you'd like), add the template markers where you want the documentation to be inserted:
+
+```markdown
+<!--doc_begin-->
+<!--doc_end-->
+```
+
+2. Add `pndurette/gh-actions-auto-docs` to a workflow, for example:
 
 ```yaml
 name: Generate Action Docs
 
 on: [pull_request]
 
-permissions:
-  # Required to push changes
-  contents: write
-
 jobs:
   doc:
     runs-on: ubuntu-latest
 
+    permissions:
+      # Required to push changes!
+      contents: write
+
     steps:
     - uses: actions/checkout@v3
       with:
-        # Required to push changes
+        # Required to push changes!
         ref: ${{ github.event.pull_request.head.ref }}
     
-    - uses: pndurette/gh-actions-auto-docs@v1 # ✨
+    - uses: pndurette/gh-actions-auto-docs@v1
 ```
 
-## Configuration
+:warning: **Note the requirements for allowing the workflow to push to git!**
+
+### Configuration
 
 <!--doc_begin-->
-### Inputs
+
+#### Inputs
 |Input|Description|Default|Required|
 |-----|-----------|-------|:------:|
 |`action_yaml_file`|The path to the GitHub Action's `action.yml` file|`./action.yml`|no|

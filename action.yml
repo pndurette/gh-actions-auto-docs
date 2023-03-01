@@ -51,7 +51,7 @@ inputs:
     description: |
       Whenever to commit and push changes changes to `target_file`
     required: false
-    default: "false"
+    default: "true"
   git_push_user_name:
     description: The git user name to commit with
     required: false

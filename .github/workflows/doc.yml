@@ -4,14 +4,13 @@ on:
   pull_request:
     branches: ["main"]
 
-permissions:
-  # Required to push the changes
-  contents: write
-
 jobs:
   docs:
     name: Docs
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
     - name: Checkout
@@ -22,4 +21,4 @@ jobs:
       uses: ./
       with:
         include_outputs: false
-        git_push: true
+        heading_size: 4
