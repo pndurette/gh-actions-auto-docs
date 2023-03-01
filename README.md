@@ -43,7 +43,7 @@ jobs:
 
 :warning: **Note the requirements for allowing the workflow to push to git!**
 
-### Configuration
+## Configuration
 
 <!--doc_begin_-->
 
@@ -66,6 +66,6 @@ jobs:
 
 <!--doc_end_-->
 
-### Licence
+## Licence
 
 [The MIT License (MIT)](LICENSE) Copyright © 2023 Pierre Nicolas Durette
