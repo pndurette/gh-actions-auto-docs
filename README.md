@@ -64,6 +64,7 @@ jobs:
 |`git_push_user_email`|The git user email to commit with|`github-actions[bot]@users.noreply.github.com`|no|
 |`git_commit_message`|The git commit message|`GitHub Action Auto-Docs`|no|
 |`git_commit_signoff`|Whenever to sign-off the git commit|`false`|no|
+
 <!--doc_end_-->
 
 ## Example
