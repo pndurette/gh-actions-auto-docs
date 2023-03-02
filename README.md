@@ -116,8 +116,8 @@ outputs:
 ### Inputs
 |Input|Description|Default|Required|
 |-----|-----------|-------|:------:|
-|`param1`|This param has some **bold** and *italics*|`value1`|yes|
-|`param2`|<p>Path to some yaml:</p><pre>foo: bar<br />baz:<br />  - abc<br /></pre><p>:warning: <strong>Some cautionnary <code>tale</code>!</strong></p>|`./some_file.yaml`|no|
+|`param1`|<p>Path to some yaml:</p><pre>foo: bar<br />baz:<br />  - abc<br /></pre><p>:warning: <strong>Some cautionnary <code>tale</code>!</strong></p>|`./some_file.yaml`|no|
+|`param2`|This param has some **bold** and *italics*|`value1`|yes|
 |`param3`|See [link to somwehre](https://github.com)|n/a|no|
 ### Outputs
 |Output|Description|
