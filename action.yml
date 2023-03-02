@@ -92,7 +92,7 @@ runs:
         TARGET_FILE: ${{ inputs.target_file }}
         MARKER_START: ${{ inputs.marker_start }}
         MARKER_END: ${{ inputs.marker_end }}
-      run: python -m actiondoc # TODO: rename
+      run: python -m actiondocs
     # Git Push
     # Requires the use of actions/checkout
     # with "ref: ${{ github.event.pull_request.head.ref }}"

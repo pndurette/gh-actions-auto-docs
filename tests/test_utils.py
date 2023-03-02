@@ -1,6 +1,6 @@
 import os
 
-from actiondoc.utils import markdown_to_github_html_for_table
+from actiondocs.utils import markdown_to_github_html_for_table
 
 
 def test_table_markdown():

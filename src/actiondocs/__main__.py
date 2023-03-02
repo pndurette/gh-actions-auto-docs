@@ -3,9 +3,10 @@ import logging
 import os
 import sys
 
-from .main import ActionDoc
+from .main import ActionDocs
+from .gha import GHAFormatter
 
-# An entrypoint to generate Action documentation Markdown
+# An entrypoint to generate action documentation Markdown
 # using environment variables as arguments
 # Usage: python -m actiondoc
 
@@ -19,6 +20,15 @@ REQUIRED_ENV_VARS = [
     "MARKER_START",
     "MARKER_END",
 ]
+
+# Logger w/ GHAFormatter for GitHub Actions
+logger = logging.getLogger("root")
+logger.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler()
+formatter = GHAFormatter(fmt="%(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 def _load_env_vars():
@@ -55,7 +65,7 @@ def main():
     config = _load_env_vars()
 
     # Use json to load boolean strings into boolean types
-    action_doc = ActionDoc(
+    action_doc = ActionDocs(
         action_file=config["ACTION_YAML_FILE"],
         include_inputs=json.loads(config["INCLUDE_INPUTS"].lower()),
         include_outputs=json.loads(config["INCLUDE_OUTPUTS"].lower()),
@@ -68,14 +78,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # Configure logging
-    # Automatically enable debug when it is enabled in GitHub Actions:
-    # https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/enabling-debug-logging
-    if os.environ.get("ACTIONS_STEP_DEBUG") == "true":
-        log_level = logging.DEBUG
-    else:
-        log_level = logging.INFO
-    logging.basicConfig(level=log_level)
-
     # Run
     main()

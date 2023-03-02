@@ -10,7 +10,7 @@ log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 
-class ActionDoc:
+class ActionDocs:
     """A GitHub Action Markdown docs generator"""
 
     def __init__(
@@ -60,17 +60,25 @@ class ActionDoc:
             log.debug(f"Arg: {k} = '{v}'")
 
         # Debug (action config)
-        log.debug(f"action configuration: {self.action_config}")
+        log.debug(f"Action config: {self.action_config}")
 
     def _load_yaml(self, filename: str) -> dict:
         """Loads a YAML file"""
-        with open(filename, "r") as f:
-            return yaml.safe_load(f)
+        try:
+            with open(filename, "r") as f:
+                return yaml.safe_load(f)
+        except OSError as e:
+            log.error(f"Error loading YAML '{filename}': {str(e)}")
+            raise
 
     def _load_text(self, filename: str) -> str:
         """Loads a text file"""
-        with open(filename, "r") as f:
-            return f.read()
+        try:
+            with open(filename, "r") as f:
+                return f.read()
+        except OSError as e:
+            log.error(f"Error loading '{filename}': {str(e)}")
+            raise
 
     def _get_markdown_table_inputs(self, config: dict) -> str:
         """Generates the action's 'inputs' as a Markdown table
@@ -168,11 +176,7 @@ class ActionDoc:
             # Append markdown line
             # Strip any trailing end-of-line char from the action file
             # (e.g. trailing \n on multi-line yaml)
-            rows.append(
-                f"|{output_id.rstrip()}"
-                f"|{desc.rstrip()}"
-                f"|"
-            )
+            rows.append(f"|{output_id.rstrip()}" f"|{desc.rstrip()}" f"|")
 
         # Join rows with newlines
         return "\n".join(rows)
@@ -209,8 +213,8 @@ class ActionDoc:
             md += self._get_markdown_table_outputs(config)
 
         # Debug
-        for index, line in enumerate(md.splitlines()):
-            log.debug(f"Markdown line {index:03}: {line}")
+        for line in md.splitlines():
+            log.debug(f"md: {line}")
 
         return md
 
@@ -246,6 +250,11 @@ class ActionDoc:
             filename: the file to save the resulting document to
         """
         document = self.generate()
-        with open(filename, "w") as f:
-            f.write(document)
-            log.info(f"Wrote to '{filename}'")
+
+        try:
+            with open(filename, "w") as f:
+                f.write(document)
+                log.info(f"Wrote to '{filename}'")
+        except IOError as e:
+            log.error(f"Error saving '{filename}': {str(e)}")
+            raise
