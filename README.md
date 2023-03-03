@@ -40,7 +40,7 @@ jobs:
       with:
         # Required to push changes!
         ref: ${{ github.event.pull_request.head.ref }}
-    
+
     - uses: pndurette/gh-actions-auto-docs@v1
 ```
 
@@ -69,7 +69,7 @@ jobs:
 
 ## Example
 
-This `action.yml` ... 
+This `action.yml` ...
 
 ```yaml
 # [...]
@@ -119,7 +119,7 @@ outputs:
 |-----|-----------|-------|:------:|
 |`param1`|<p>Path to some yaml:</p><pre>foo: bar<br />baz:<br />  - abc<br /></pre><p>:warning: <strong>Some cautionnary <code>tale</code>!</strong></p>|`./some_file.yaml`|no|
 |`param2`|This param has some **bold** and *italics*|`value1`|yes|
-|`param3`|See [link to somwehre](https://github.com)|n/a|no|
+|`param3`|See [link to somewhere](https://github.com)|n/a|no|
 ### Outputs
 |Output|Description|
 |------|-----------|
