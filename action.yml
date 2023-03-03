@@ -1,0 +1,113 @@
+name: GitHub Actions Auto-Docs
+author: Pierre Nicolas Durette
+description: A GitHub Action for generating GitHub Actions documentation
+
+branding:
+  color: yellow
+  icon: file-text
+
+inputs:
+  action_yaml_file:
+    description: The path to the GitHub Action's `action.yml` file
+    required: false
+    default: ./action.yml
+  include_inputs:
+    description: Whenever to document the action's inputs
+    required: false
+    default: "true"
+  include_outputs:
+    description: Whenever to document the action's outputs
+    required: false
+    default: "true"
+  heading_size:
+    description: |
+      The Markdown heading size to use for the documented
+      sections (i.e. number of `#`)
+    required: false
+    default: "3"
+  template_file:
+    description: The file used as template
+    required: false
+    default: ./README.md
+  target_file:
+    description: |
+      The resulting file of the template substitution.
+      To update in-place, this can be the same as `template_file`.
+    required: false
+    default: ./README.md
+  marker_start:
+    description: |
+      The opening marker from which the template substitution
+      will take place
+    required: false
+    default: "<!--doc_begin-->"
+  marker_end:
+    description: |
+      The closing marker to which the template substitution
+      will take place
+    required: false
+    default: "<!--doc_end-->"
+  git_push:
+    description: |
+      Whenever to commit and push changes changes to `target_file`
+    required: false
+    default: "true"
+  git_push_user_name:
+    description: The git user name to commit with
+    required: false
+    default: "github-actions[bot]"
+  git_push_user_email:
+    description: The git user email to commit with
+    required: false
+    default: "github-actions[bot]@users.noreply.github.com"
+  git_commit_message:
+    description: The git commit message
+    required: false
+    default: "GitHub Action Auto-Docs"
+  git_commit_signoff:
+    description: Whenever to sign-off the git commit
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    # Setup Python
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    # Install ActionDocs
+    - shell: bash
+      run: |
+        pip install --upgrade pip 
+        pip install .
+    # Run ActionDocs
+    - shell: bash
+      env:
+        ACTION_YAML_FILE: ${{ inputs.action_yaml_file }}
+        INCLUDE_INPUTS: ${{ inputs.include_inputs }}
+        INCLUDE_OUTPUTS: ${{ inputs.include_outputs }}
+        HEADING_SIZE: ${{ inputs.heading_size }}
+        TEMPLATE_FILE: ${{ inputs.template_file }}
+        TARGET_FILE: ${{ inputs.target_file }}
+        MARKER_START: ${{ inputs.marker_start }}
+        MARKER_END: ${{ inputs.marker_end }}
+      run: python -m actiondocs
+    # Git Push
+    # Requires the use of actions/checkout
+    # with "ref: ${{ github.event.pull_request.head.ref }}"
+    # (See: https://github.com/actions/checkout)
+    - shell: bash
+      if: ${{ fromJSON(inputs.git_push) }}
+      env:
+        GIT_PUSH_USER_NAME: ${{ inputs.git_push_user_name }}
+        GIT_PUSH_USER_EMAIL: ${{ inputs.git_push_user_email }}
+        GIT_COMMIT_MESSAGE: ${{ inputs.git_commit_message }}
+        GIT_COMMIT_SIGNOFF: ${{ fromJSON(inputs.git_commit_signoff) && '-s' || '' }}
+        TARGET_FILE: ${{ inputs.target_file }}
+      run: |
+        git config user.name "${GIT_PUSH_USER_NAME}"
+        git config user.email "${GIT_PUSH_USER_EMAIL}"
+        git add "${TARGET_FILE}"
+        git commit ${GIT_COMMIT_SIGNOFF} -m "${GIT_COMMIT_MESSAGE}" || true
+        git push || true

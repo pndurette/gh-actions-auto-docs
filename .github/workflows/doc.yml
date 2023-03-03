@@ -1,0 +1,28 @@
+name: Generate Action Docs
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+    - name: Generate Docs
+      uses: ./
+      with:
+        include_outputs: false
+        # Using non-default markers so the default
+        # markers can be shown in the README.md
+        # setup section w/o being substituted!
+        marker_start: "<!--doc_begin_-->"
+        marker_end: "<!--doc_end_-->"
