@@ -11,6 +11,10 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
 
+    permissions:
+      pull-requests: write
+      contents: write
+
     steps:
       - name: Release Please
         uses: google-github-actions/release-please-action@v3
