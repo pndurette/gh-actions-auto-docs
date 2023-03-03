@@ -28,12 +28,13 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: actions/checkout@v3
       # Tag the major for GitHub Action tag
-      - name: Tag Major
-        if: ${{ steps.release.outputs.release_created }}
-        run: |
-          git tag v${{ steps.release.outputs.rmajor }} \
-              -m "v${{ steps.release.outputs.rmajor }}" \
-              --force
+      # TODO: Need to config git beforehand
+      # - name: Tag Major
+      #   if: ${{ steps.release.outputs.release_created }}
+      #   run: |
+      #     git tag v${{ steps.release.outputs.rmajor }} \
+      #         -m "v${{ steps.release.outputs.rmajor }}" \
+      #         --force
 
 # References:
 # * Release Please:
