@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Release Please
+        uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: python
+          package-name: actiondocs
+
+      # Only do the rest (package build/push) if a release was created
+      - name: Checkout
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v3
+      # Tag the major for GitHub Action tag
+      - name: Tag Major
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          git tag v${{ steps.release.outputs.rmajor }} \
+              -m "v${{ steps.release.outputs.rmajor }}" \
+              --force
+
+# References:
+# * Release Please:
+#   https://github.com/googleapis/release-please
+# * Release Please (GitHub Action)
+#   https://github.com/google-github-actions/release-please-action
+# * Conventional Commits:
+#   https://www.conventionalcommits.org/
