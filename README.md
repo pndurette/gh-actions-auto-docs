@@ -2,7 +2,7 @@
 
 > A GitHub Action for generating GitHub Action documentation—[including its own!](.github/workflows/doc.yml)
 
-[![Tests](https://github.com/pndurette/gh-actions-auto-docs/actions/workflows/test.yml/badge.svg)](https://github.com/pndurette/gh-actions-auto-docs/actions/workflows/test.yml)
+[![Tests](https://github.com/pndurette/gh-actions-auto-docs/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/pndurette/gh-actions-auto-docs/actions/workflows/test.yml)
 
 ## Features
 
