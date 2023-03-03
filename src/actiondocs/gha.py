@@ -3,10 +3,11 @@ import logging
 # GitHub Action Workflow Commands
 # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions
 
-# TODO: Docs
-
 class GHACommand:
-    """A GitHub Action Worflow Command"""
+    """A GitHub Action Worflow Command
+
+    Formats a GitHub Action Workflow Command to a string
+    """
     def __init__(self, cmd_name: str, cmd_value: str, **cmd_params) -> None:
         self.cmd_name = cmd_name
         self.cmd_value = cmd_value
@@ -29,6 +30,11 @@ class GHACommand:
 
 
 class GHAAnnotation(GHACommand):
+    """A GitHub Action Worflow Command (Annotation)
+
+    Subset of GitHub Action Workflow Command that annotates the workflow run
+    and optionally refer to a file and its position which will be displayed inline
+    """
     def preflight(self) -> None:
         ALLOWED_PARAMS = ["file", "line", "endLine", "title"]
 
@@ -46,23 +52,51 @@ class GHAAnnotation(GHACommand):
 
 
 def debug(message: str) -> None:
+    """Debug <message> to stdout
+
+    https://docs.github.com/en/actions/using-workflows/
+    workflow-commands-for-github-actions#setting-a-debug-message
+    """
     print(GHACommand(cmd_name="debug", cmd_value=message).output())
 
 
 def notice(message: str, **kwargs) -> None:
+    """Notice <message> to stdout
+
+    Other values can be passed:
+    https://docs.github.com/en/actions/using-workflows/
+    workflow-commands-for-github-actions#setting-a-notice-message
+    """
     print(GHAAnnotation(cmd_name="notice", cmd_value=message, **kwargs).output())
 
 
 def warning(message: str, **kwargs) -> None:
+    """Warn <message> to stdout
+
+    Other values can be passed:
+    https://docs.github.com/en/actions/using-workflows/
+    workflow-commands-for-github-actions#setting-a-warning-message
+    """
     print(GHAAnnotation(cmd_name="warning", cmd_value=message, **kwargs).output())
 
 
 def error(message: str, **kwargs) -> None:
+    """Error <message> to stdout
+
+    Other values can be passed:
+    https://docs.github.com/en/actions/using-workflows/
+    workflow-commands-for-github-actions#setting-an-error-message
+    """
     print(GHAAnnotation(cmd_name="error", cmd_value=message, **kwargs).output())
 
 
 
 class GHAFormatter(logging.Formatter):
+    """Logging Formatter wrapper for GitHub Actions
+
+    Wraps the standard Formatter formated string with the
+    appropriate GitHub Actions Worflow Command depending on log level
+    """
     def format(self, record: logging.LogRecord) -> str:
         s = super().format(record)
         if record.levelno == logging.DEBUG:
