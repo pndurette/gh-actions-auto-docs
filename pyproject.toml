@@ -1,6 +1,6 @@
 [project]
 name = "actiondocs"
-version = "1.0.0"
+version = "1.0.1"
 description = "A GitHub Actions Markdown docs generator"
 authors = [{name = "Pierre Nicolas Durette", email = "pndurette@gmail.com"}]
 requires-python = ">=3.7"
