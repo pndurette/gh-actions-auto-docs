@@ -80,7 +80,7 @@ runs:
     - shell: bash
       run: |
         pip install --upgrade pip 
-        pip install .
+        pip install ${GITHUB_ACTION_PATH}
     # Run ActionDocs
     - shell: bash
       env:
