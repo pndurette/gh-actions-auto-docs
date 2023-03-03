@@ -93,7 +93,7 @@ inputs:
     required: false
     default: ./some_file.yaml
   param3:
-    description: See [link to somwehre](https://github.com)
+    description: See [link to somewhere](https://github.com)
 
 outputs:
   output1:
