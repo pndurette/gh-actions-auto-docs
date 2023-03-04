@@ -1,0 +1,19 @@
+name: Dump Event Payload
+
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  dump:
+    name: Payload
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        repository: ${{ github.event.pull_request.head.repo. }}
+    - name: Dump
+      run: echo ${{ github.event }}
