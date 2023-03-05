@@ -8,7 +8,7 @@ from .gha import GHAFormatter
 
 # An entrypoint to generate action documentation Markdown
 # using environment variables as arguments
-# Usage: python -m actiondoc
+# Usage: python -m actiondocs
 
 REQUIRED_ENV_VARS = [
     "ACTION_YAML_FILE",
