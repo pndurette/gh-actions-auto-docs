@@ -7,7 +7,7 @@ requires-python = ">=3.7"
 
 dependencies = [
     "PyYAML==6.0",
-    "Markdown==3.4.1"
+    "Markdown==3.4.3"
 ]
 
 [project.optional-dependencies]
