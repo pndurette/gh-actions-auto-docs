@@ -26,7 +26,7 @@ jobs:
       # Only do the rest (package build/push) if a release was created
       - name: Checkout
         if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       # Tag the major for GitHub Action tag
       # TODO: Need to config git beforehand
       # - name: Tag Major
