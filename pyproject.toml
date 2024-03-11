@@ -12,5 +12,5 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-    "pytest ~= 7.2",
+    "pytest ~= 8.1",
 ]
